@@ -1,0 +1,9 @@
+# Copy this file to terraform.tfvars and fill in real values.
+# terraform.tfvars is gitignored - never commit real credentials.
+
+aws_region  = "ap-south-1"
+db_password = "CHANGE_ME_TO_A_STRONG_PASSWORD"
+
+# Everything else has sensible defaults in variables.tf - override here only if needed.
+# db_username = "appadmin"
+# db_name     = "taskdb"

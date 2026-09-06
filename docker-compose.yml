@@ -1,0 +1,80 @@
+version: "3.9"
+
+# This compose file is deliberately structured to mirror the AWS layout:
+#   mysql   ~= RDS MySQL instance (private, no host port exposed by default)
+#   backend ~= ECS Fargate "backend" service/task
+#   frontend ~= ECS Fargate "frontend" service/task (nginx), what the ALB fronts
+#
+# `docker-compose up` should behave the same way the deployed app does,
+# since both use the images built from these Dockerfiles and the same
+# relative /api routing.
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: three-tier-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: taskdb
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: apppassword
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    networks:
+      - three-tier-net
+    # No "ports:" mapping on purpose - in production RDS is never exposed
+    # to the internet, only reachable from the backend's security group.
+    # Uncomment below only if you need to inspect the DB directly with a
+    # local MySQL client.
+    # ports:
+    #   - "3306:3306"
+
+  backend:
+    build:
+      context: ./backend
+    container_name: three-tier-backend
+    restart: unless-stopped
+    environment:
+      PORT: 4000
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: appuser
+      DB_PASSWORD: apppassword
+      DB_NAME: taskdb
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - "4000:4000"   # exposed on host for direct debugging/curl access
+    networks:
+      - three-tier-net
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: three-tier-frontend
+    restart: unless-stopped
+    environment:
+      BACKEND_HOST: backend
+      BACKEND_PORT: 4000
+    depends_on:
+      - backend
+    ports:
+      - "3000:80"     # matches the port the ALB will hit on the frontend service
+    networks:
+      - three-tier-net
+
+networks:
+  three-tier-net:
+    driver: bridge
+
+volumes:
+  mysql-data:
