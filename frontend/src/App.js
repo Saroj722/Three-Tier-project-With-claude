@@ -80,7 +80,7 @@ function App() {
   return (
     <div className="app">
       <header className="header">
-        <h1>Task Manager</h1>
+        <h1>Task Manager by Saroj</h1>
         <p className="subtitle">React &middot; Node/Express &middot; MySQL &middot; running on AWS ECS Fargate</p>
       </header>
 
