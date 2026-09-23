@@ -1,3 +1,2 @@
-git link: https://github.com/Saroj722/Three-Tier-project-With-claude.git
-
-clone to ec2 and run terraform code
+Added Admin access to 
+three-tier-demo-codepipeline-role manually
