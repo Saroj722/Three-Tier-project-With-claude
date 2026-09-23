@@ -1,3 +1,7 @@
+* {
+  box-sizing: border-box;
+}
+
 .app {
   max-width: 640px;
   margin: 0 auto;
@@ -38,11 +42,6 @@
   font-size: 0.95rem;
 }
 
-.add-form input:focus {
-  outline: 2px solid #38bdf8;
-  outline-offset: 1px;
-}
-
 .add-form button {
   padding: 10px 18px;
   border-radius: 8px;
@@ -51,10 +50,6 @@
   color: #0f172a;
   font-weight: 600;
   cursor: pointer;
-}
-
-.add-form button:hover {
-  background: #0ea5e9;
 }
 
 .error-banner {
@@ -92,17 +87,9 @@
   border-left: 4px solid #475569;
 }
 
-.task-item.status-todo {
-  border-left-color: #64748b;
-}
-
-.task-item.status-in_progress {
-  border-left-color: #eab308;
-}
-
-.task-item.status-done {
-  border-left-color: #22c55e;
-}
+.task-item.status-todo { border-left-color: #64748b; }
+.task-item.status-in_progress { border-left-color: #eab308; }
+.task-item.status-done { border-left-color: #22c55e; }
 
 .task-info {
   display: flex;
@@ -111,11 +98,7 @@
   min-width: 0;
 }
 
-.task-title {
-  font-weight: 600;
-  color: #f1f5f9;
-}
-
+.task-title { font-weight: 600; color: #f1f5f9; }
 .task-desc {
   font-size: 0.85rem;
   color: #94a3b8;
@@ -124,11 +107,7 @@
   white-space: nowrap;
 }
 
-.task-actions {
-  display: flex;
-  gap: 8px;
-  flex-shrink: 0;
-}
+.task-actions { display: flex; gap: 8px; flex-shrink: 0; }
 
 .status-btn {
   padding: 6px 12px;
@@ -140,10 +119,6 @@
   cursor: pointer;
 }
 
-.status-btn:hover {
-  background: #334155;
-}
-
 .delete-btn {
   padding: 6px 12px;
   border-radius: 6px;
@@ -152,8 +127,4 @@
   color: #f87171;
   font-size: 0.8rem;
   cursor: pointer;
-}
-
-.delete-btn:hover {
-  background: #7f1d1d33;
 }

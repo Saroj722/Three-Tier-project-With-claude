@@ -1,7 +1,3 @@
-# --- ECR Repositories ---
-# Private container registries for our two images. CodeBuild (Phase 4)
-# will push here; ECS Fargate (Phase 3c) will pull from here.
-
 resource "aws_ecr_repository" "frontend" {
   name                 = "${var.project_name}-frontend"
   image_tag_mutability = "MUTABLE"
@@ -28,8 +24,6 @@ resource "aws_ecr_repository" "backend" {
   }
 }
 
-# Keep only the most recent images so ECR storage costs don't creep up
-# over the life of the project - useful once CI/CD is pushing on every commit.
 resource "aws_ecr_lifecycle_policy" "frontend" {
   repository = aws_ecr_repository.frontend.name
 

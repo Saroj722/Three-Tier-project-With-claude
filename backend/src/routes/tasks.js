@@ -3,7 +3,6 @@ const { pool } = require('../db');
 
 const router = express.Router();
 
-// GET /api/tasks - list all tasks
 router.get('/', async (req, res) => {
   try {
     const [rows] = await pool.query('SELECT * FROM tasks ORDER BY created_at DESC');
@@ -14,7 +13,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// GET /api/tasks/:id - get a single task
 router.get('/:id', async (req, res) => {
   try {
     const [rows] = await pool.query('SELECT * FROM tasks WHERE id = ?', [req.params.id]);
@@ -26,7 +24,6 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// POST /api/tasks - create a task
 router.post('/', async (req, res) => {
   const { title, description, status } = req.body;
   if (!title || !title.trim()) {
@@ -45,7 +42,6 @@ router.post('/', async (req, res) => {
   }
 });
 
-// PUT /api/tasks/:id - update a task
 router.put('/:id', async (req, res) => {
   const { title, description, status } = req.body;
   try {
@@ -69,7 +65,6 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// DELETE /api/tasks/:id - delete a task
 router.delete('/:id', async (req, res) => {
   try {
     const [result] = await pool.query('DELETE FROM tasks WHERE id = ?', [req.params.id]);

@@ -1,7 +1,3 @@
--- Schema for the three-tier demo app.
--- The backend also creates this table automatically on startup (see backend/src/db.js),
--- so this file is mainly useful for local docker-compose bootstrapping and documentation.
-
 CREATE DATABASE IF NOT EXISTS taskdb;
 USE taskdb;
 

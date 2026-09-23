@@ -1,8 +1,5 @@
 const mysql = require('mysql2/promise');
 
-// All connection details come from environment variables so that the
-// same image can run locally (docker-compose) or in ECS (task definition
-// env vars / Secrets Manager) without any code changes.
 const pool = mysql.createPool({
   host: process.env.DB_HOST || 'localhost',
   port: process.env.DB_PORT || 3306,

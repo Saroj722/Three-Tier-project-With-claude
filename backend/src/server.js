@@ -10,15 +10,11 @@ const PORT = process.env.PORT || 4000;
 app.use(cors());
 app.use(express.json());
 
-// Simple request logging - useful when you're checking CloudWatch logs
 app.use((req, res, next) => {
   console.log(`${new Date().toISOString()} ${req.method} ${req.path}`);
   next();
 });
 
-// Health check endpoint - THIS is what the ALB target group and ECS
-// container health check will hit. Keep it fast and dependency-light,
-// but also verify DB connectivity so ECS can catch a broken DB link.
 app.get('/health', async (req, res) => {
   try {
     await pool.query('SELECT 1');

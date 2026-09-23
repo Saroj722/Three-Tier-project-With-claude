@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
 
-// Relative path on purpose: in AWS, the ALB routes requests starting with
-// /api/* to the backend ECS target group, and everything else to the
-// frontend target group. Locally, nginx.conf does the same proxying.
-// This means the exact same build artifact works in both places with
-// zero rebuilds or env-specific config.
 const API_BASE = '/api/tasks';
 
 const STATUS_LABELS = {

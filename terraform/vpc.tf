@@ -1,12 +1,3 @@
-# --- Networking ---
-#
-# Layout: 2 public subnets (one per AZ) hold the ALB and a NAT gateway.
-# 2 private subnets (one per AZ) hold the ECS Fargate tasks and RDS -
-# nothing in the private subnets has a public IP or is directly reachable
-# from the internet. This is the actual "3-tier" network segmentation:
-# internet -> public subnet (ALB) -> private subnet (app) -> private
-# subnet (data), each layer only reachable from the layer in front of it.
-
 data "aws_availability_zones" "available" {
   state = "available"
 }
@@ -54,11 +45,6 @@ resource "aws_subnet" "private" {
   }
 }
 
-# Single NAT gateway (not one per AZ) to keep costs down for a demo/learning
-# project. This means if the AZ hosting the NAT gateway has an outage,
-# private subnets in other AZs lose internet egress too - a real production
-# setup would use one NAT gateway per AZ. Worth mentioning as a known
-# trade-off if asked in an interview.
 resource "aws_eip" "nat" {
   domain = "vpc"
 

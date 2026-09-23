@@ -63,3 +63,50 @@ variable "db_allocated_storage" {
   type        = number
   default     = 20
 }
+
+variable "frontend_container_port" {
+  type    = number
+  default = 80
+}
+
+variable "backend_container_port" {
+  type    = number
+  default = 4000
+}
+
+variable "frontend_cpu" {
+  description = "Fargate task CPU units (256 = 0.25 vCPU)"
+  type        = number
+  default     = 256
+}
+
+variable "frontend_memory" {
+  description = "Fargate task memory in MB"
+  type        = number
+  default     = 512
+}
+
+variable "backend_cpu" {
+  type    = number
+  default = 256
+}
+
+variable "backend_memory" {
+  type    = number
+  default = 512
+}
+
+variable "frontend_desired_count" {
+  type    = number
+  default = 1
+}
+
+variable "backend_desired_count" {
+  type    = number
+  default = 1
+}
+
+variable "log_retention_days" {
+  type    = number
+  default = 7
+}
