@@ -48,6 +48,18 @@ data "aws_iam_policy_document" "codebuild_permissions" {
     resources = ["*"]
   }
 
+  # ECR Public uses a separate auth mechanism from private ECR - both
+  # actions below are required together for `aws ecr-public get-login-password`
+  # to succeed. See buildspec.yml for why we authenticate to ECR Public at all.
+  statement {
+    effect = "Allow"
+    actions = [
+      "ecr-public:GetAuthorizationToken",
+      "sts:GetServiceBearerToken",
+    ]
+    resources = ["*"]
+  }
+
   statement {
     effect = "Allow"
     actions = [
@@ -125,6 +137,7 @@ data "aws_iam_policy_document" "codepipeline_permissions" {
       "ecs:DescribeServices",
       "ecs:DescribeTaskDefinition",
       "ecs:DescribeTasks",
+      "ecs:DescribeClusters",
       "ecs:ListTasks",
       "ecs:RegisterTaskDefinition",
       "ecs:UpdateService",

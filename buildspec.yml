@@ -9,10 +9,14 @@ phases:
     commands:
       - echo "Logging in to ECR..."
       - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
-      # Use the short git commit SHA as the image tag instead of always
-      # pushing "latest". This is the actual point of automating this:
-      # every deployed image is traceable back to an exact commit, so
-      # "what code is running in prod right now" has a real answer.
+      # Also authenticate to ECR Public (where our Dockerfiles' base images
+      # now come from - see backend/Dockerfile). Anonymous pulls from
+      # public.ecr.aws work too, but authenticated pulls get a much higher
+      # rate limit, which is the whole point of moving off Docker Hub in
+      # the first place. ECR Public's control plane only exists in us-east-1,
+      # regardless of which region the rest of this project runs in.
+      - echo "Logging in to ECR Public..."
+      - aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
       - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-8)
       - echo "Building images tagged $IMAGE_TAG"
 

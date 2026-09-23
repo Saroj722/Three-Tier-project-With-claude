@@ -1,4 +1,8 @@
-FROM node:20-slim
+# Pulled from Amazon ECR Public (a mirror of the official Docker Hub image)
+# rather than docker.io directly. CodeBuild's shared build fleet IPs
+# frequently hit Docker Hub's anonymous-pull rate limit (429 Too Many
+# Requests) - ECR Public sidesteps that for AWS-originating traffic.
+FROM public.ecr.aws/docker/library/node:20-slim
 
 RUN groupadd -r appgroup && useradd -r -g appgroup appuser
 
