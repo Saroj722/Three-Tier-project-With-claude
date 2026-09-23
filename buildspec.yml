@@ -1,0 +1,45 @@
+version: 0.2
+
+# Runs inside CodeBuild for every pipeline execution. Env vars referenced
+# here (AWS_ACCOUNT_ID, AWS_REGION, FRONTEND_REPO_URL, BACKEND_REPO_URL)
+# are injected by the CodeBuild project definition in terraform/cicd_build.tf.
+
+phases:
+  pre_build:
+    commands:
+      - echo "Logging in to ECR..."
+      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+      # Use the short git commit SHA as the image tag instead of always
+      # pushing "latest". This is the actual point of automating this:
+      # every deployed image is traceable back to an exact commit, so
+      # "what code is running in prod right now" has a real answer.
+      - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-8)
+      - echo "Building images tagged $IMAGE_TAG"
+
+  build:
+    commands:
+      - echo "Building backend image..."
+      - docker build -t $BACKEND_REPO_URL:$IMAGE_TAG -t $BACKEND_REPO_URL:latest ./backend
+      - echo "Building frontend image..."
+      - docker build -t $FRONTEND_REPO_URL:$IMAGE_TAG -t $FRONTEND_REPO_URL:latest ./frontend
+
+  post_build:
+    commands:
+      - echo "Pushing images to ECR..."
+      - docker push $BACKEND_REPO_URL:$IMAGE_TAG
+      - docker push $BACKEND_REPO_URL:latest
+      - docker push $FRONTEND_REPO_URL:$IMAGE_TAG
+      - docker push $FRONTEND_REPO_URL:latest
+      # These two files are what the pipeline's ECS deploy actions consume.
+      # Format is fixed by AWS: a JSON array with one {name, imageUri} pair,
+      # where "name" must exactly match the container name in the task
+      # definition (see container_definitions in terraform/ecs.tf).
+      - printf '[{"name":"backend","imageUri":"%s"}]' $BACKEND_REPO_URL:$IMAGE_TAG > imagedefinitions-backend.json
+      - printf '[{"name":"frontend","imageUri":"%s"}]' $FRONTEND_REPO_URL:$IMAGE_TAG > imagedefinitions-frontend.json
+      - cat imagedefinitions-backend.json
+      - cat imagedefinitions-frontend.json
+
+artifacts:
+  files:
+    - imagedefinitions-backend.json
+    - imagedefinitions-frontend.json

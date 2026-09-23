@@ -57,3 +57,12 @@ output "alb_dns_name" {
 output "ecs_cluster_name" {
   value = aws_ecs_cluster.main.name
 }
+
+output "codestar_connection_arn" {
+  description = "After apply, go to AWS Console -> Developer Tools -> Settings -> Connections and click 'Update pending connection' to authorize GitHub access - the pipeline cannot pull source until this is done"
+  value       = aws_codestarconnections_connection.github.arn
+}
+
+output "pipeline_name" {
+  value = aws_codepipeline.app.name
+}

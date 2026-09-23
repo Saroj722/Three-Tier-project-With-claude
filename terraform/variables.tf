@@ -110,3 +110,19 @@ variable "log_retention_days" {
   type    = number
   default = 7
 }
+
+variable "github_repo_owner" {
+  description = "GitHub username or org that owns the repo, e.g. 'yourname' in github.com/yourname/repo"
+  type        = string
+}
+
+variable "github_repo_name" {
+  description = "GitHub repo name (without owner), e.g. 'devops-three-tier-app'"
+  type        = string
+}
+
+variable "github_branch" {
+  description = "Branch CodePipeline watches for changes"
+  type        = string
+  default     = "main"
+}
